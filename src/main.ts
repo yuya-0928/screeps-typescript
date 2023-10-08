@@ -1,3 +1,7 @@
+import { logger } from './modules/logger';
+import { deleteDeadCreepMemory } from './modules/deleteDeadCreepMemory';
+import { roleManager } from './modules/role/roleManager';
+import { spawnManager } from './modules/spawn/spawnManager';
 import { ErrorMapper } from "utils/ErrorMapper";
 
 declare global {
@@ -29,6 +33,17 @@ declare global {
   }
 }
 
+export interface CreepMemory {
+  [key: string]: any;
+  role: string;
+  refueling: boolean;
+  upgrading?: boolean;
+  repaiering?: string;
+  repaierTargetId: string;
+}
+
+deleteDeadCreepMemory();
+
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
 export const loop = ErrorMapper.wrapLoop(() => {
@@ -40,4 +55,10 @@ export const loop = ErrorMapper.wrapLoop(() => {
       delete Memory.creeps[name];
     }
   }
+
+  spawnManager();
+  roleManager();
+
+  logger.creepCosts();
+  logger.sourceCountBuildingCreep();
 });
